@@ -105,16 +105,29 @@ days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturda
 
 # Display the table of tasks and check buttons
 st.write("### Task Completion for the week starting:", st.session_state['current_week_start'].strftime('%Y-%m-%d'))
-table_data = {}
 
+# Display weekdays as column headers and tasks as row headers
+cols = st.columns(8)  # 7 columns for days of the week + 1 for task names
+
+# The first column is reserved for task names, so we put an empty space for the header
+cols[0].write("")
+
+# Write days of the week as column headers
+for i, day in enumerate(days_of_week):
+    cols[i+1].write(day)
+
+# Now create the checkboxes for each task under the appropriate day of the week
 for task in tasks:
-    cols = st.columns(7)
+    row_cols = st.columns(8)  # 7 columns for days of the week + 1 for task names
+    row_cols[0].write(task)  # Write the task name in the first column
+    
     for i, day in enumerate(days_of_week):
         task_date = (st.session_state['current_week_start'] + timedelta(days=i)).strftime('%Y-%m-%d')
         task_entry = next((t for t in tasks_for_week if t['task_name'] == task and t['task_date'] == task_date), None)
+        
         if task_entry:
-            checked = st.checkbox(day, value=bool(task_entry['status']), key=f"{task}_{day}")
-            table_data[(task, day)] = checked
+            checked = row_cols[i+1].checkbox("", value=bool(task_entry['status']), key=f"{task}_{day}")
+            
             # Update database when the checkbox is toggled
             if checked != bool(task_entry['status']):
                 update_task_status(task, task_date, int(checked))
