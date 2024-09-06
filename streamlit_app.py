@@ -102,6 +102,7 @@ tasks_for_week = get_tasks_for_week(st.session_state['current_week_start'])
 if not tasks_for_week:
     # Insert initial tasks for current week
     insert_initial_tasks(tasks, st.session_state['current_week_start'])
+    tasks_for_week = get_tasks_for_week(st.session_state['current_week_start'])
 
 # Create a grid-like table using the data fetched
 days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
