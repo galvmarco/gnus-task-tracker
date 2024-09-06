@@ -42,7 +42,6 @@ def get_tasks_for_week(start_date):
                 FilterExpression="task_date = :date",
                 ExpressionAttributeValues={":date": task_date}
             )
-            tasks_for_week.extend(response['Items'])
             # Check if the Items list is empty
             if response['Items']:
                 tasks_for_week.extend(response['Items'])
