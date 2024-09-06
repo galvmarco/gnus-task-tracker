@@ -34,20 +34,17 @@ def insert_initial_tasks(tasks, start_date):
                     st.write("Error inserting tasks: ", e.response['Error']['Message'])
 
 
-# Function to fetch tasks for the current week
+@st.cache_data(ttl=300)  # Cache data for 5 minutes (adjust as needed)
 def get_tasks_for_week(start_date):
     tasks_for_week = []
     for i in range(7):
         task_date = (start_date + timedelta(days=i)).strftime('%Y-%m-%d')
         try:
-            response = table.scan(
-                FilterExpression="task_date = :date",
+            response = table.query(
+                KeyConditionExpression="task_date = :date",
                 ExpressionAttributeValues={":date": task_date}
             )
-            # Check if the Items list is empty
-            if response['Items']:
-                tasks_for_week.extend(response['Items'])
-
+            tasks_for_week.extend(response['Items'])
         except ClientError as e:
             st.write("Error fetching tasks: ", e.response['Error']['Message'])
     return tasks_for_week
