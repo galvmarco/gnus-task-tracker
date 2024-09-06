@@ -34,7 +34,7 @@ def insert_initial_tasks(tasks, start_date):
                     st.write("Error inserting tasks: ", e.response['Error']['Message'])
 
 
-@st.cache_data(ttl=300)  # Cache data for 5 minutes (adjust as needed)
+#@st.cache_data(ttl=300)  # Cache data for 5 minutes (adjust as needed)
 def get_tasks_for_week(tasks, start_date):
     tasks_for_week = []
     
