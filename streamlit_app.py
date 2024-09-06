@@ -132,7 +132,7 @@ for task in tasks:
         key = f"{task}_{day}_{st.session_state['current_week_start'].strftime('%Y-%m-%d')}"
         
         if task_entry:
-            checked = row_cols[i+1].checkbox("", value=bool(task_entry['status']), key=f"{task}_{day}", key=key)
+            checked = row_cols[i+1].checkbox("", value=bool(task_entry['status']), key=key)
             
             # Update database when the checkbox is toggled
             if checked != bool(task_entry['status']):
