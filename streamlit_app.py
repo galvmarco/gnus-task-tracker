@@ -43,6 +43,10 @@ def get_tasks_for_week(start_date):
                 ExpressionAttributeValues={":date": task_date}
             )
             tasks_for_week.extend(response['Items'])
+            # Check if the Items list is empty
+            if response['Items']:
+                tasks_for_week.extend(response['Items'])
+
         except ClientError as e:
             st.write("Error fetching tasks: ", e.response['Error']['Message'])
     return tasks_for_week
@@ -94,11 +98,12 @@ with col3:
     if st.button('Next Week →'):
         go_to_next_week()
 
-# Insert initial tasks for current week
-insert_initial_tasks(tasks, st.session_state['current_week_start'])
-
 # Fetch tasks for the current week
 tasks_for_week = get_tasks_for_week(st.session_state['current_week_start'])
+
+if not tasks_for_week:
+    # Insert initial tasks for current week
+    insert_initial_tasks(tasks, st.session_state['current_week_start'])
 
 # Create a grid-like table using the data fetched
 days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
