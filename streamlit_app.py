@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from botocore.exceptions import ClientError
 
 # Initialize DynamoDB connection
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource('dynamodb', region_name='eu-west-1')
 table_name = "TaskStatus"
 table = dynamodb.Table(table_name)
 
