@@ -128,9 +128,11 @@ for task in tasks:
     for i, day in enumerate(days_of_week):
         task_date = (st.session_state['current_week_start'] + timedelta(days=i)).strftime('%Y-%m-%d')
         task_entry = next((t for t in tasks_for_week if t['task_name'] == task and t['task_date'] == task_date), None)
+        # Generate a unique key for the checkbox by including the task name, day, and the start date of the week
+        key = f"{task}_{day}_{st.session_state['current_week_start'].strftime('%Y-%m-%d')}"
         
         if task_entry:
-            checked = row_cols[i+1].checkbox("", value=bool(task_entry['status']), key=f"{task}_{day}")
+            checked = row_cols[i+1].checkbox("", value=bool(task_entry['status']), key=f"{task}_{day}", key=key)
             
             # Update database when the checkbox is toggled
             if checked != bool(task_entry['status']):
