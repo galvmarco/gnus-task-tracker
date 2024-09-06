@@ -18,19 +18,21 @@ def init_db():
 
 # Function to insert initial tasks for the current week
 def insert_initial_tasks(tasks, start_date):
-    for task in tasks:
-        for i in range(7):
-            task_date = (start_date + timedelta(days=i)).strftime('%Y-%m-%d')
-            try:
-                table.put_item(
-                    Item={
-                        'task_name': task,
-                        'task_date': task_date,
-                        'status': 0  # Initially unchecked
-                    }
-                )
-            except ClientError as e:
-                st.write("Error inserting tasks: ", e.response['Error']['Message'])
+    with table.batch_writer() as batch:
+        for task in tasks:
+            for i in range(7):
+                task_date = (start_date + timedelta(days=i)).strftime('%Y-%m-%d')
+                try:
+                    batch.put_item(
+                        Item={
+                            'task_name': task,
+                            'task_date': task_date,
+                            'status': 0  # Initially unchecked
+                        }
+                    )
+                except ClientError as e:
+                    st.write("Error inserting tasks: ", e.response['Error']['Message'])
+
 
 # Function to fetch tasks for the current week
 def get_tasks_for_week(start_date):
