@@ -35,18 +35,25 @@ def insert_initial_tasks(tasks, start_date):
 
 
 @st.cache_data(ttl=300)  # Cache data for 5 minutes (adjust as needed)
-def get_tasks_for_week(start_date):
+def get_tasks_for_week(tasks, start_date):
     tasks_for_week = []
-    for i in range(7):
-        task_date = (start_date + timedelta(days=i)).strftime('%Y-%m-%d')
-        try:
-            response = table.query(
-                KeyConditionExpression="task_date = :date",
-                ExpressionAttributeValues={":date": task_date}
-            )
-            tasks_for_week.extend(response['Items'])
-        except ClientError as e:
-            st.write("Error fetching tasks: ", e.response['Error']['Message'])
+    
+    # Loop through each task and query based on the task_name (partition key) and task_date (sort key)
+    for task in tasks:
+        for i in range(7):
+            task_date = (start_date + timedelta(days=i)).strftime('%Y-%m-%d')
+            try:
+                response = table.query(
+                    KeyConditionExpression="task_name = :task_name AND task_date = :task_date",
+                    ExpressionAttributeValues={
+                        ":task_name": task,
+                        ":task_date": task_date
+                    }
+                )
+                tasks_for_week.extend(response['Items'])
+            except ClientError as e:
+                st.write("Error fetching tasks: ", e.response['Error']['Message'])
+    
     return tasks_for_week
 
 # Function to update task status
